@@ -7,7 +7,6 @@ class I2CDevice
     I2CDevice(unsigned int deviceId = 0);
     virtual ~I2CDevice();
 
-    void begin() {}
 
     unsigned int getDeviceId() const {return m_deviceId;}
     void setDeviceId(unsigned int deviceId) {m_deviceId = deviceId;}

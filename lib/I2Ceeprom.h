@@ -7,7 +7,6 @@ class I2Ceeprom
     I2Ceeprom(unsigned int deviceId = 0x50);
     virtual ~I2Ceeprom();
 
-    void begin() {}
 
     unsigned int getDeviceId() const {return m_deviceId;}
     void setDeviceId(unsigned int deviceId) {m_deviceId = deviceId;}
@@ -16,6 +15,8 @@ class I2Ceeprom
 
     // returns number of bytes actually read (<= requestSize).
     int read(unsigned int addr, char* buf, int requestSize);
+
+    // returns an error code.
     int write(unsigned int addr, unsigned char data);
     //int write(unsigned int addr, const unsigned char* buf, unsigned int byteCount);
 
