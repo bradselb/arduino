@@ -6,13 +6,13 @@ proc sendRequest {f} {
 #    puts  $f {}
     puts $f "show t"
     flush $f
-    puts stdout "request sent"
+#    puts stdout "request sent"
 }
 
 proc printReply {f} {
     global state
     if {[gets $f reply] >= 0} {
-        puts "$reply"
+        puts -nonewline "$reply "
         flush stdout
     }
 }
@@ -26,6 +26,7 @@ after 2000
 sendRequest $f
 printReply $f
 printReply $f
+puts stdout {}
 
 # vwait state
 # puts stdout "$state"
