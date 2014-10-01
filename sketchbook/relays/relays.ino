@@ -3,15 +3,13 @@
 #include <ctype.h>
 
 
-extern int strtotm(char* s, struct tm* tm);
-
 void blink(int pin, int period, int time_on, int n=1);
 
 
 static const int led = 13;
 static const int output[] = {13, 2, 3, 4, 5};
 static const int output_count = sizeof output / sizeof output[0];
-
+static int verbose = 0;
 
 void setup()
 {
@@ -40,7 +38,7 @@ void loop()
     bytesRead = Serial.readBytesUntil('\n', buf, bufsize-1);
 
     if (bytesRead > 0) {
-        Serial.println(buf);
+        if (verbose) Serial.println(buf);
 
         while (0 != (arg = strtok(p, delims))) {
             p = 0;
@@ -58,17 +56,13 @@ void loop()
                     Serial.println("illegal value.");
                 }
 
-                // what pattern?
+                // what to do?
                 arg = strtok(0, delims);
                 if (!arg) {
-                    // show the state of this relay.
-                    int state = digitalRead(output[nr]);
-                    Serial.println(state);
                     continue;
                 }
 
-                if (0) {
-                } else if(0 == strncmp(arg, "on", 2)) {
+                if(0 == strncmp(arg, "on", 2)) {
                     digitalWrite(output[nr],HIGH);
                 } else if(0 == strncmp(arg, "off", 3)) {
                     digitalWrite(output[nr],LOW);
@@ -79,6 +73,10 @@ void loop()
                         count = atoi(arg);
                     }
                     blink(output[nr], 1000, 250, count);
+                } else if (0 == strncmp(arg, "show", 2)) {
+                    // show the state of this relay.
+                    int state = digitalRead(output[nr]);
+                    Serial.println(state);
                 }
 
             } else if (0==strncmp(arg, "wait", 4)) {
@@ -90,6 +88,10 @@ void loop()
                 milliseconds = atoi(arg);
                 delay(milliseconds);
 
+            } else if (0 == strncmp(arg, "verbose", 1)) {
+                verbose = 1;
+            } else if (0 == strncmp(arg, "quiet", 4)) {
+                verbose = 0;
             }
         } // while arg
     }
