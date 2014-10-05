@@ -6,14 +6,12 @@
 void blink(int pin, int period, int time_on, int n=1);
 
 
-static const int led = 13;
 static const int output[] = {13, 2, 3, 4, 5};
 static const int output_count = sizeof output / sizeof output[0];
 static int verbose = 0;
 
 void setup()
 {
-    pinMode(led, OUTPUT);
     for (int i = 0; i < output_count; ++i) {
         pinMode(output[i], OUTPUT);
     }
@@ -25,23 +23,24 @@ void setup()
 
 void loop()
 {
-    int bytesRead;
+    int bytecount;
     char* arg;
     const char* delims = " ,;";
     int bufsize;
     char buf[256];
-    char* p = &buf[0];
+    char* bufp;
 
     bufsize = sizeof buf;
     memset(buf, 0, bufsize);
 
-    bytesRead = Serial.readBytesUntil('\n', buf, bufsize-1);
+    bytecount = Serial.readBytesUntil('\n', buf, bufsize-1);
 
-    if (bytesRead > 0) {
+    if (bytecount > 0) {
         if (verbose) Serial.println(buf);
 
-        while (0 != (arg = strtok(p, delims))) {
-            p = 0;
+        bufp = &buf[0];
+        while (0 != (arg = strtok(bufp, delims))) {
+            bufp = 0;
             
             // what command?
             if (0 == strncmp(arg, "output", 3) || 0 == strncmp(arg, "relay", 3)) {
@@ -56,16 +55,18 @@ void loop()
                     Serial.println("illegal value.");
                 }
 
-                // what to do?
+                // what to do with that relay?
                 arg = strtok(0, delims);
                 if (!arg) {
                     continue;
                 }
 
-                if(0 == strncmp(arg, "on", 2)) {
+                if (0 == strncmp(arg, "on", 2)) {
                     digitalWrite(output[nr],HIGH);
-                } else if(0 == strncmp(arg, "off", 3)) {
+
+                } else if (0 == strncmp(arg, "off", 3)) {
                     digitalWrite(output[nr],LOW);
+
                 } else if (0 == strncmp(arg, "blink", 5)) {
                     int count = 1;
                     arg = strtok(0, delims);
@@ -73,6 +74,7 @@ void loop()
                         count = atoi(arg);
                     }
                     blink(output[nr], 1000, 250, count);
+
                 } else if (0 == strncmp(arg, "show", 2)) {
                     // show the state of this relay.
                     int state = digitalRead(output[nr]);
@@ -98,17 +100,19 @@ void loop()
 }
 
 // blink the digital output pin
-// period is in milliseconds
-// duty cycle is percent
+// period and time_on are in milliseconds
 // n is the number of cycles. 
 void blink(int pin, int period, int time_on, int n)
 {
-  int time_off = period - time_on;
+    int time_off;
 
-  for (int i=0; i<n; ++i) {
-    digitalWrite(pin, HIGH);
-    delay(time_on);
-    digitalWrite(pin, LOW);
-    delay(time_off);
-  }
+    if ((0 < period) && (0 < time_on) && (time_on < period)) {
+        time_off = period - time_on;
+        for (int i=0; i<n; ++i) {
+            digitalWrite(pin, HIGH);
+            delay(time_on);
+            digitalWrite(pin, LOW);
+            delay(time_off);
+        }
+    }
 }
