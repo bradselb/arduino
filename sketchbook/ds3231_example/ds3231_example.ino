@@ -94,6 +94,9 @@ void loop()
                 if (n >= 6) {
                     rtc.setTime(&tm);
                 }
+            } else {
+                // not understood.
+                Serial.print("OK\n");
             }
         }
     }
