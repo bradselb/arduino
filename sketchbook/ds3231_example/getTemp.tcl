@@ -21,7 +21,6 @@ fconfigure $f -blocking 1 -buffering line  -encoding binary  -mode 57600,n,8,1; 
 # fileevent $f writable [list sendRequest $f]
 fileevent $f readable [list printReply $f]
 
-after 500
 sendRequest $f "get temp"
 
 vwait state
