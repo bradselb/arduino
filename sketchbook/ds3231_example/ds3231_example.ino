@@ -17,6 +17,7 @@ static const int led = 13;
 void setup()
 {
     Serial.begin(57600);
+    pinMode(led, OUTPUT);
 
 #ifdef VERBOSE
     if (eeprom.isPresent()) {
@@ -97,6 +98,9 @@ void loop()
             } else {
                 // not understood.
                 Serial.print("OK\n");
+                digitalWrite(led, HIGH); 
+                delay(500);
+                digitalWrite(led, LOW);
             }
         }
     }
