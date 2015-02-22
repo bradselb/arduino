@@ -6,7 +6,7 @@
 void blink(int pin, int period, int time_on, int n=1);
 
 
-static const int output[] = {13, 2, 3, 4, 5};
+static const int output[] = {13, 8, 9};
 static const int output_count = sizeof output / sizeof output[0];
 static int verbose = 0;
 
